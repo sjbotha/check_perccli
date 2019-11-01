@@ -85,8 +85,10 @@ def main():
     else:
         log.debug('SSH connection established')
 
-    # we cd to the dir with the executable because newer versions of perccli depend on libstorelib.so which is in the same directory as perccli executable
-	stdin, stdout, stderr = ssh_client.exec_command('cd `dirname %s`; %s /call show all j' % (args.perccli_path, args.perccli_path))
+    # we cd to the dir with the executable because newer versions of perccli depend on libstorelib.so
+    # which is in the same directory as perccli executable
+    stdin, stdout, stderr = ssh_client.exec_command('cd `dirname %s`; %s /call show all j' %
+                                                    (args.perccli_path, args.perccli_path))
 
     stdout = stdout.read().strip().decode('utf-8')
     try:
@@ -138,12 +140,12 @@ def main():
         bbu = controller.get('Response Data').get('BBU_Info')
 
         # Some RAID cards like H330 do not have a battery so make this optional
-        if (bbu != None):
-          battery_state = bbu[0].get('State')
-          if battery_state != 'Optimal':
-              exit_code = 2
-          log.debug('C%s BBU (%s)' % (c, battery_state))
-          msg.append('BBU: %s' % battery_state)
+        if (bbu is not None):
+            battery_state = bbu[0].get('State')
+            if battery_state != 'Optimal':
+                exit_code = 2
+            log.debug('C%s BBU (%s)' % (c, battery_state))
+            msg.append('BBU: %s' % battery_state)
 
         die(exit_code, ', '.join(msg) if msg else 'No problems detected')
 
